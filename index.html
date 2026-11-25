@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1B5E20">
+<title>KhetKhata &amp; Fasal Doctor</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  if (window.tailwind) {
+    tailwind.config = { theme: { extend: { colors: { forest: '#1B5E20', amberx: '#F59E0B' } } } };
+  }
+</script>
+<style>
+  :root { --forest:#1B5E20; --amber:#F59E0B; --ink:#14231a; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#EEF3EC; color:var(--ink); font-family: system-ui, -apple-system, "Segoe UI", "Noto Sans Devanagari", Roboto, sans-serif; padding-bottom: calc(76px + env(safe-area-inset-bottom)); }
+  .card { background:#fff; border-radius:16px; box-shadow:0 1px 3px rgba(0,0,0,.18); padding:14px; margin:12px; }
+  .btn { min-height:48px; min-width:48px; padding:8px 14px; border-radius:12px; border:2px solid var(--forest); background:#fff; color:var(--forest); font-weight:700; font-size:15px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:6px; }
+  .btn-p { background:var(--forest); color:#fff; }
+  .btn-a { background:var(--amber); border-color:var(--amber); color:#1c1300; }
+  .btn-d { border-color:#B71C1C; color:#B71C1C; }
+  .btn-sm { min-height:48px; padding:6px 12px; font-size:14px; }
+  .btn:disabled { opacity:.5; cursor:not-allowed; }
+  .btn:focus-visible, .inp:focus-visible, .tabbtn:focus-visible { outline:3px solid var(--amber); outline-offset:2px; }
+  .inp { width:100%; min-height:48px; padding:10px 12px; border:2px solid #7a9a80; border-radius:12px; font-size:16px; background:#fff; color:var(--ink); }
+  textarea.inp { min-height:84px; }
+  label.lbl { display:block; font-weight:700; margin:12px 0 4px; font-size:14px; }
+  .hdr { position:sticky; top:0; z-index:30; background:var(--forest); color:#fff; display:flex; align-items:center; gap:6px; padding:8px 10px; }
+  .hdr h1 { font-size:17px; margin:0; flex:1; line-height:1.15; }
+  .hdr .btn { background:rgba(255,255,255,.12); color:#fff; border-color:#fff; }
+  .nav { position:fixed; bottom:0; left:0; right:0; z-index:30; background:#fff; border-top:3px solid var(--forest); display:flex; padding-bottom:env(safe-area-inset-bottom); }
+  .tabbtn { flex:1; min-height:60px; border:0; background:#fff; font-weight:700; font-size:13px; color:#375a3d; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; }
+  .tabbtn[aria-selected="true"] { background:var(--forest); color:#fff; }
+  .modal { position:fixed; inset:0; z-index:50; background:rgba(0,0,0,.55); display:none; align-items:flex-end; justify-content:center; }
+  .modal.open { display:flex; }
+  .sheet { background:#fff; width:100%; max-width:560px; max-height:92vh; overflow:auto; border-radius:20px 20px 0 0; padding:16px; }
+  @media (min-width:600px) { .modal { align-items:center; } .sheet { border-radius:20px; } }
+  .chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+  .chip { min-height:48px; padding:6px 14px; border-radius:24px; border:2px solid var(--forest); background:#fff; color:var(--forest); font-weight:700; cursor:pointer; }
+  .chip[aria-pressed="true"] { background:var(--forest); color:#fff; }
+  .catgrid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .cat { min-height:64px; border:2px solid #7a9a80; border-radius:12px; background:#fff; font-weight:700; font-size:13px; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .cat[aria-pressed="true"] { background:#E8F5E9; border-color:var(--forest); box-shadow:0 0 0 2px var(--forest); }
+  .hero { background:linear-gradient(160deg,#1B5E20,#2E7D32); color:#fff; }
+  .bar { height:16px; border-radius:8px; background:rgba(255,255,255,.3); overflow:hidden; }
+  .bar > i { display:block; height:100%; background:var(--amber); }
+  .bar.win > i { background:#10B981; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .kv small { display:block; opacity:.85; font-size:12px; }
+  .kv b { font-size:18px; }
+  .stagebox { min-width:112px; border:2px solid #9bb59f; border-radius:12px; padding:8px; background:#fff; font-size:12px; }
+  .stagebox.cur { border-color:var(--amber); background:#FFF7E0; box-shadow:0 0 0 2px var(--amber); }
+  .tl { display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; }
+  .badge { display:inline-block; padding:2px 8px; border-radius:10px; font-size:12px; font-weight:700; background:#E8F5E9; color:#1B5E20; }
+  .badge.pending { background:#FFF3CD; color:#7a5200; }
+  .badge.skipped { background:#e5e7eb; color:#374151; }
+  .badge.credit { background:#FDE2E2; color:#9b1c1c; }
+  .row { display:flex; gap:8px; align-items:flex-start; }
+  .grow { flex:1; min-width:0; }
+  .acts { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
+  .toast { position:fixed; left:12px; right:12px; bottom:calc(84px + env(safe-area-inset-bottom)); z-index:70; background:#14231a; color:#fff; padding:12px 14px; border-radius:12px; display:none; font-weight:600; }
+  .toast.show { display:block; }
+  .err { color:#B71C1C; font-weight:700; margin-top:8px; min-height:1px; }
+  .scroll { display:flex; gap:8px; overflow-x:auto; padding:2px 0; }
+  .muted { color:#4b5b50; font-size:13px; }
+  .thumb { width:56px; height:56px; object-fit:cover; border-radius:8px; border:2px solid #7a9a80; cursor:pointer; background:#fff; }
+  details > summary { cursor:pointer; min-height:48px; display:flex; align-items:center; list-style:none; }
+  details > summary::-webkit-details-marker { display:none; }
+  .hidden { display:none !important; }
+</style>
+</head>
+<body>
+<header class="hdr">
+  <h1 id="appTitle">🌾 KhetKhata &amp; Fasal Doctor</h1>
+  <button class="btn btn-sm" id="btnExport" type="button" data-act="export" title="Export JSON" aria-label="Export JSON">⬇️</button>
+  <button class="btn btn-sm" id="btnImport" type="button" data-act="import" title="Import JSON" aria-label="Import JSON">⬆️</button>
+  <input type="file" id="importFile" accept="application/json,.json" class="hidden">
+  <button class="btn btn-sm" id="btnLang" type="button" data-act="lang" aria-label="Language">EN</button>
+</header>
+
+<main id="app" aria-live="polite"></main>
+
+<nav class="nav" aria-label="Main">
+  <button class="tabbtn" type="button" data-act="tab" data-tab="home" id="tab-home"></button>
+  <button class="tabbtn" type="button" data-act="tab" data-tab="khata" id="tab-khata"></button>
+  <button class="tabbtn" type="button" data-act="tab" data-tab="party" id="tab-party"></button>
+  <button class="tabbtn" type="button" data-act="tab" data-tab="doctor" id="tab-doctor"></button>
+</nav>
+<div class="toast" id="toast" role="status"></div>
+
+<!-- Plot modal -->
+<div class="modal" id="plotModal" role="dialog" aria-modal="true" aria-labelledby="plotTitle">
+  <form class="sheet" id="plotForm" novalidate>
+    <h2 id="plotTitle" style="margin:0 0 4px;font-size:20px"></h2>
+    <input type="hidden" id="plotId">
+    <label class="lbl" for="plotName" data-i="plotName"></label>
+    <input class="inp" id="plotName" maxlength="60" required>
+    <label class="lbl" for="plotAcres" data-i="acreage"></label>
+    <input class="inp" id="plotAcres" type="number" inputmode="decimal" step="0.01" min="0.01" required>
+    <label class="lbl" for="plotCrop" data-i="crop"></label>
+    <select class="inp" id="plotCrop"></select>
+    <label class="lbl" for="plotSow" data-i="sowDate"></label>
+    <input class="inp" id="plotSow" type="date" required>
+    <label class="lbl" for="plotSeason" data-i="season"></label>
+    <input class="inp" id="plotSeason" maxlength="30">
+    <label class="lbl" for="plotBatai" data-i="batai"></label>
+    <input class="inp" id="plotBatai" type="number" inputmode="decimal" min="0" max="100" step="1" placeholder="0">
+    <p class="muted" data-i="rescaleNote"></p>
+    <div class="err" id="plotErr"></div>
+    <div class="acts"><button class="btn btn-p" type="submit" data-i="save"></button><button class="btn" type="button" data-act="close" data-modal="plotModal" data-i="cancel"></button></div>
+  </form>
+</div>
+
+<!-- Task modal -->
+<div class="modal" id="taskModal" role="dialog" aria-modal="true" aria-labelledby="taskTitle">
+  <form class="sheet" id="taskForm" novalidate>
+    <h2 id="taskTitle" style="margin:0 0 4px;font-size:20px"></h2>
+    <input type="hidden" id="taskId">
+    <label class="lbl" for="taskName" data-i="taskName"></label>
+    <input class="inp" id="taskName" maxlength="80">
+    <label class="lbl" for="taskDay" data-i="targetDay"></label>
+    <input class="inp" id="taskDay" type="number" inputmode="numeric" min="1" max="365" step="1">
+    <label class="lbl" for="taskDose" data-i="dosage"></label>
+    <input class="inp" id="taskDose" maxlength="140">
+    <label class="lbl" for="taskCost" data-i="estCost"></label>
+    <input class="inp" id="taskCost" type="number" inputmode="decimal" min="0" step="0.01">
+    <label class="lbl" for="taskCat" data-i="category"></label>
+    <select class="inp" id="taskCat"></select>
+    <label class="lbl" for="taskStatus" data-i="status"></label>
+    <select class="inp" id="taskStatus"></select>
+    <div class="err" id="taskErr"></div>
+    <div class="acts"><button class="btn btn-p" type="submit" data-i="save"></button><button class="btn" type="button" data-act="close" data-modal="taskModal" data-i="cancel"></button></div>
+  </form>
+</div>
+
+<!-- Done quick-log modal -->
+<div class="modal" id="doneModal" role="dialog" aria-modal="true" aria-labelledby="doneTitle">
+  <form class="sheet" id="doneForm" novalidate>
+    <h2 id="doneTitle" style="margin:0 0 4px;font-size:20px" data-i="doneTitle"></h2>
+    <p class="muted" id="doneTask"></p>
+    <input type="hidden" id="doneTaskId">
+    <label class="lbl" for="doneAmount" data-i="actualSpent"></label>
+    <input class="inp" id="doneAmount" type="number" inputmode="decimal" min="0.01" step="0.01">
+    <label class="lbl" data-i="payMode"></label>
+    <div class="chips" id="doneMode"></div>
+    <label class="lbl" for="doneParty" data-i="party"></label>
+    <input class="inp" id="doneParty" list="partyList" maxlength="60" autocomplete="off">
+    <label class="lbl" for="doneDate" data-i="date"></label>
+    <input class="inp" id="doneDate" type="date">
+    <div class="err" id="doneErr"></div>
+    <div class="acts"><button class="btn btn-p" type="submit" data-i="saveDone"></button><button class="btn" type="button" data-act="close" data-modal="doneModal" data-i="cancel"></button></div>
+  </form>
+</div>
+
+<!-- Entry drawer -->
+<div class="modal" id="entryModal" role="dialog" aria-modal="true" aria-labelledby="entryTitle">
+  <form class="sheet" id="entryForm" novalidate>
+    <h2 id="entryTitle" style="margin:0 0 4px;font-size:20px"></h2>
+    <input type="hidden" id="entryId">
+    <label class="lbl" data-i="entryType"></label>
+    <div class="chips" id="entryTypes"></div>
+    <label class="lbl" data-i="category"></label>
+    <div class="catgrid" id="entryCats"></div>
+    <label class="lbl" for="entryDate" data-i="date"></label>
+    <input class="inp" id="entryDate" type="date" required>
+    <label class="lbl" for="entryAmount" data-i="amount"></label>
+    <input class="inp" id="entryAmount" type="number" inputmode="decimal" min="0.01" step="0.01" required>
+    <div class="chips" id="entryChips"></div>
+    <div id="modeWrap">
+      <label class="lbl" data-i="payMode"></label>
+      <div class="chips" id="entryModes"></div>
+    </div>
+    <div id="dirWrap" class="hidden">
+      <label class="lbl" data-i="direction"></label>
+      <div class="chips" id="entryDirs"></div>
+    </div>
+    <label class="lbl" for="entryParty" data-i="partyWorker"></label>
+    <input class="inp" id="entryParty" list="partyList" maxlength="60" autocomplete="off">
+    <datalist id="partyList"></datalist>
+    <label class="lbl" for="entryNotes" data-i="notes"></label>
+    <textarea class="inp" id="entryNotes" maxlength="400"></textarea>
+    <div class="acts">
+      <button class="btn" type="button" id="micBtn" data-act="mic"></button>
+      <span class="muted" id="micStatus" aria-live="polite"></span>
+    </div>
+    <label class="lbl" for="entryFile" data-i="bill"></label>
+    <input class="inp" id="entryFile" type="file" accept="image/*,application/pdf">
+    <div class="row" id="attWrap" style="margin-top:8px"></div>
+    <div class="err" id="entryErr"></div>
+    <div class="acts"><button class="btn btn-p" type="submit" data-i="save"></button><button class="btn" type="button" data-act="close" data-modal="entryModal" data-i="cancel"></button></div>
+  </form>
+</div>
+
+<!-- Settle modal -->
+<div class="modal" id="settleModal" role="dialog" aria-modal="true" aria-labelledby="settleTitle">
+  <form class="sheet" id="settleForm" novalidate>
+    <h2 id="settleTitle" style="margin:0 0 4px;font-size:20px" data-i="settleTitle"></h2>
+    <p id="settleInfo" style="font-weight:700"></p>
+    <input type="hidden" id="settleKey">
+    <label class="lbl" for="settleAmount" data-i="amount"></label>
+    <input class="inp" id="settleAmount" type="number" inputmode="decimal" min="0.01" step="0.01">
+    <label class="lbl" for="settleDate" data-i="date"></label>
+    <input class="inp" id="settleDate" type="date">
+    <div class="err" id="settleErr"></div>
+    <div class="acts"><button class="btn btn-p" type="submit" data-i="settleSave"></button><button class="btn" type="button" data-act="close" data-modal="settleModal" data-i="cancel"></button></div>
+  </form>
+</div>
+
+<!-- Viewer -->
+<div class="modal" id="viewerModal" role="dialog" aria-modal="true" aria-label="Bill" style="align-items:center">
+  <div style="width:100%;max-width:720px;padding:10px">
+    <button class="btn btn-a" type="button" data-act="close" data-modal="viewerModal" data-i="close"></button>
+    <div id="viewerBody" style="margin-top:8px;text-align:center"></div>
+  </div>
+</div>
+
+<!-- Share modal -->
+<div class="modal" id="shareModal" role="dialog" aria-modal="true" aria-labelledby="shareTitle">
+  <div class="sheet">
+    <h2 id="shareTitle" style="margin:0 0 4px;font-size:20px" data-i="shareTitle"></h2>
+    <textarea class="inp" id="shareText" readonly style="min-height:200px"></textarea>
+    <div class="acts">
+      <button class="btn btn-p" type="button" data-act="wa" data-i="openWa"></button>
+      <button class="btn" type="button" data-act="copy" data-i="copyText"></button>
+      <button class="btn" type="button" data-act="close" data-modal="shareModal" data-i="close"></button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+'use strict';
+
+/* ================= i18n ================= */
+var T = {
+  appTitle: ['🌾 खेतखाता और फसल डॉक्टर', '🌾 KhetKhata & Fasal Doctor'],
+  tabHome: ['होम', 'Home'],
+  back: ['← वापस', '← Back'],
+  tilePlots: ['मेरे खेत', 'My Plots'],
+  tileData: ['डेटा / बैकअप', 'Storage / Backup'],
+  tileKhata: ['खाता सूची', 'Khata List'],
+  tileParty: ['मज़दूर / उधार', 'Majdoor / Udhaar'],
+  tileDoctor: ['फसल डॉक्टर', 'Fasal Doctor'],
+  tileNaya: ['नया हिसाब', 'Naya Hisab'],
+  dataTitle: ['डेटा और बैकअप', 'Storage & Backup'],
+  dStatusOk: ['✅ डेटा इस फ़ोन/ब्राउज़र में सहेजा जा रहा है।', '✅ Data is being saved on this phone/browser.'],
+  dStatusBad: ['❌ स्टोरेज उपलब्ध नहीं (प्राइवेट मोड?)। बदलाव बंद करने पर खो जाएँगे — बैकअप लें।', '❌ Storage unavailable (private mode?). Changes will be lost on close — export a backup.'],
+  dWhere: ['कहाँ: ब्राउज़र localStorage (कुंजी {k}). इंटरनेट/सर्वर पर नहीं जाता।', 'Where: browser localStorage (key {k}). Nothing is sent to any server.'],
+  dSize: ['आकार: {s} KB · खेत {p} · काम {t} · हिसाब {e}', 'Size: {s} KB · plots {p} · tasks {t} · entries {e}'],
+  dSaved: ['आखिरी बार सहेजा: {x}', 'Last saved: {x}'],
+  dWarn: ['⚠️ ब्राउज़र का डेटा/कैश साफ़ करने या दूसरा ब्राउज़र/फ़ोन इस्तेमाल करने पर डेटा नहीं दिखेगा। नियमित बैकअप डाउनलोड करें।', '⚠️ Clearing browser data, or using another browser/phone, will not show this data. Download backups regularly.'],
+  dPersist: ['🔒 डेटा सुरक्षित रखने का अनुरोध', '🔒 Ask browser to keep data'],
+  dPersistOk: ['ब्राउज़र ने डेटा सुरक्षित रखना स्वीकार किया।', 'Browser agreed to keep the data.'],
+  dPersistNo: ['ब्राउज़र ने मना किया/समर्थन नहीं। बैकअप लें।', 'Browser declined or does not support it. Export backups.'],
+  dExport: ['⬇️ बैकअप डाउनलोड (JSON)', '⬇️ Export Backup (JSON)'],
+  dImport: ['⬆️ बैकअप वापस लाएँ', '⬆️ Import / Restore'],
+  tabDoctor: ['फसल डॉक्टर', 'Fasal Doctor'],
+  tabKhata: ['खाता', 'Khata'],
+  tabParty: ['मज़दूर / पार्टी', 'Majdoor / Party'],
+  nayaKhet: ['+ नया खेत', '+ Naya Khet (Add Plot)'],
+  editPlot: ['✏️ खेत बदलें', '✏️ Edit Plot'],
+  delPlot: ['🗑️ खेत हटाएँ', '🗑️ Delete Plot'],
+  addPlotTitle: ['नया खेत जोड़ें', 'Naya Khet (Add Plot)'],
+  editPlotTitle: ['खेत बदलें', 'Edit Plot'],
+  plotName: ['खेत का नाम', 'Plot Name'],
+  acreage: ['रकबा (एकड़)', 'Acreage (Acres)'],
+  crop: ['फसल', 'Crop'],
+  sowDate: ['बुवाई की तारीख', 'Sowing Date'],
+  season: ['सीज़न (वैकल्पिक)', 'Season (optional)'],
+  batai: ['बटाई % (बटाईदार का हिस्सा, वैकल्पिक)', 'Batai % (sharecropper share, optional)'],
+  rescaleNote: ['रकबा या बुवाई तारीख बदलने पर बाकी (Pending) कार्यक्रम दोबारा बनेगा।', 'Changing acreage or sowing date regenerates the Pending schedule.'],
+  save: ['सहेजें', 'Save'], cancel: ['रद्द करें', 'Cancel'], close: ['बंद करें', 'Close'],
+  acres: ['एकड़', 'acres'], sownOn: ['बुवाई', 'Sown'],
+  noPlot: ['कोई खेत नहीं है। "नया खेत" दबाएँ।', 'No plot yet. Tap "Naya Khet".'],
+  kulKharch: ['कुल खर्च', 'Kul Kharch (Invested)'],
+  kulAamdani: ['कुल आमदनी', 'Kul Aamdani (Earned)'],
+  vasooli: ['वसूली / मुनाफ़ा', 'Vasooli / Munafa'],
+  munafa: ['मुनाफ़ा', 'Munafa (Profit)'],
+  vasooliBaki: ['वसूली बाकी', 'Vasooli Baki (to recover)'],
+  udhaarBaki: ['उधार बाकी', 'Udhaar Baki'],
+  denaHai: ['देना है', 'Dena Hai (To Pay)'],
+  lenaHai: ['लेना है', 'Lena Hai (To Receive)'],
+  perAcre: ['प्रति एकड़ खर्च', 'Per-Acre Cost'],
+  bataiSplit: ['बटाई बँटवारा (शुद्ध)', 'Batai Split (Net)'],
+  malik: ['मालिक', 'Owner'], bataiwala: ['बटाईदार', 'Sharecropper'],
+  breakEven: ['ब्रेक-ईवन', 'Break-even'],
+  timeline: ['फसल कैलेंडर (दिन 1–120)', 'Crop Calendar (Day 1–120)'],
+  notSown: ['बुवाई में {n} दिन बाकी', '{n} days to sowing'],
+  dayN: ['दिन {n}', 'Day {n}'],
+  stage1: ['बुवाई', 'Buwai (Sowing)'],
+  stage2: ['शुरुआती बढ़वार', 'Early Growth'],
+  stage3: ['कल्ले / वानस्पतिक', 'Vegetative'],
+  stage4: ['फूल / दाना भराव', 'Flowering / Grain-fill'],
+  stage5: ['कटाई', 'Katai (Harvest)'],
+  current: ['अभी', 'Now'],
+  addTask: ['+ कस्टम काम जोड़ें', '+ Add Custom Task'],
+  addTaskTitle: ['कस्टम काम जोड़ें', 'Add Custom Task'],
+  editTaskTitle: ['काम बदलें', 'Edit Task'],
+  taskName: ['काम का नाम', 'Task Name'],
+  targetDay: ['लक्ष्य दिन (बुवाई से)', 'Target Day (from sowing)'],
+  dosage: ['मात्रा / डोज़', 'Dosage'],
+  estCost: ['अनुमानित खर्च (₹)', 'Estimated Cost (₹)'],
+  status: ['स्थिति', 'Status'],
+  pending: ['बाकी', 'Pending'], done: ['हो गया', 'Done'], skipped: ['छोड़ा', 'Skipped'],
+  doneBtn: ['हो गया ✅', 'Done ✅'],
+  listen: ['🔊 सुनिए', '🔊 Suniye'],
+  noSpeech: ['इस फ़ोन/ब्राउज़र में आवाज़ पढ़ना उपलब्ध नहीं है। कृपया स्क्रीन पर पढ़ें।', 'Audio reading is not available on this device/browser. Please read on screen.'],
+  doseNote: ['⚠️ मात्रा सांकेतिक है। दवा/खाद डालने से पहले पैकेट का लेबल और कृषि विभाग/KVK की सलाह देखें।', '⚠️ Dosages are indicative. Check the product label and your local KVK/agriculture officer before use.'],
+  noTasks: ['कोई काम नहीं।', 'No tasks.'],
+  doneTitle: ['काम पूरा — खर्च दर्ज करें', 'Task Done — Log the expense'],
+  actualSpent: ['असली खर्च (₹)', 'Actual Spent (₹)'],
+  payMode: ['भुगतान का तरीका', 'Payment Mode'],
+  nagad: ['नकद', 'Nagad (Paid)'], udhaar: ['उधार', 'Udhaar (Credit)'],
+  party: ['पार्टी / दुकान का नाम', 'Party / Shop Name'],
+  partyWorker: ['पार्टी / मज़दूर का नाम', 'Party / Worker Name'],
+  date: ['तारीख', 'Date'],
+  saveDone: ['सहेजें और खाते में जोड़ें', 'Save & add to Khata'],
+  naya: ['+ नया हिसाब', '+ Naya Hisab'],
+  newEntry: ['नया हिसाब', 'Naya Hisab'],
+  editEntry: ['हिसाब बदलें', 'Edit Hisab'],
+  entryType: ['प्रकार', 'Entry Type'],
+  kharch: ['खर्च', 'Kharch (Expense)'], aamdani: ['आमदनी', 'Aamdani (Income)'], bhugtan: ['भुगतान', 'Bhugtan (Payment)'],
+  cat_beej: ['बीज', 'Beej (Seeds)'], cat_khad: ['खाद', 'Khad (Fertilizer)'], cat_dawai: ['दवाई', 'Dawai (Pesticide)'],
+  cat_tractor: ['ट्रैक्टर / डीज़ल', 'Tractor / Diesel'], cat_majdoori: ['मज़दूरी', 'Majdoori (Labour)'], cat_fasal: ['फसल बिक्री', 'Fasal Bikri (Sale)'],
+  category: ['श्रेणी', 'Category'],
+  amount: ['रकम (₹)', 'Amount (₹)'],
+  direction: ['किसे / किससे', 'Direction'],
+  dirOut: ['मैंने दिया', 'Maine Diya (paid out)'], dirIn: ['मुझे मिला', 'Mujhe Mila (received)'],
+  notes: ['नोट / बोलकर लिखें', 'Notes / Voice transcript'],
+  mic: ['🎤 बोलकर लिखें', '🎤 Speak to type'], micStop: ['⏹ रोकें', '⏹ Stop'],
+  micListening: ['सुन रहा है…', 'Listening…'],
+  micNo: ['इस ब्राउज़र में माइक उपलब्ध नहीं। नोट में टाइप करें।', 'Mic not supported here. Type in notes.'],
+  micErr: ['माइक त्रुटि: {e}। नोट में टाइप करें।', 'Mic error: {e}. Type in notes instead.'],
+  bill: ['बिल फोटो / PDF', 'Bill photo / PDF'],
+  replace: ['बदलने के लिए नई फ़ाइल चुनें', 'Choose a new file to replace'],
+  removeAtt: ['❌ हटाएँ', '❌ Remove'],
+  attBad: ['सिर्फ़ फोटो या छोटी PDF (400KB तक) चुनें।', 'Choose a photo or a small PDF (up to 400KB).'],
+  view: ['देखें', 'View'],
+  noEntries: ['अभी कोई हिसाब नहीं।', 'No entries yet.'],
+  confirmDelEntry: ['यह हिसाब हटाएँ?', 'Delete this entry?'],
+  confirmDelTask: ['यह काम हटाएँ?', 'Delete this task?'],
+  confirmDelPlot: ['खेत "{n}" और उसके {t} काम व {e} हिसाब हमेशा के लिए हटाएँ?', 'Delete plot "{n}" with its {t} tasks and {e} entries permanently?'],
+  confirmImport: ['मौजूदा सारा डेटा इस बैकअप से बदल जाएगा। जारी रखें?', 'All current data will be replaced by this backup. Continue?'],
+  importBad: ['बैकअप फ़ाइल सही नहीं: {e}', 'Invalid backup file: {e}'],
+  imported: ['बैकअप वापस लाया गया।', 'Backup restored.'],
+  exported: ['बैकअप डाउनलोड हुआ।', 'Backup downloaded.'],
+  saved: ['सहेजा गया।', 'Saved.'],
+  storageFail: ['स्टोरेज भरा है — बदलाव सहेजे नहीं गए। पहले बैकअप लें।', 'Storage full — change not saved. Export a backup first.'],
+  corrupt: ['पुराना डेटा पढ़ा नहीं जा सका; नमूना डेटा दिखाया गया है।', 'Saved data was unreadable; showing sample data.'],
+  eAmount: ['सही रकम (> 0) डालें।', 'Enter a valid amount (> 0).'],
+  eDate: ['सही तारीख चुनें।', 'Choose a valid date.'],
+  eParty: ['उधार / भुगतान के लिए नाम ज़रूरी है।', 'A name is required for Udhaar / Payment.'],
+  eName: ['नाम ज़रूरी है।', 'Name is required.'],
+  eAcres: ['रकबा 0 से ज़्यादा होना चाहिए।', 'Acreage must be greater than 0.'],
+  eBatai: ['बटाई 0–100 के बीच हो।', 'Batai must be between 0 and 100.'],
+  eDay: ['दिन 1 से 365 के बीच हो।', 'Day must be 1 to 365.'],
+  eCost: ['खर्च 0 या अधिक हो।', 'Cost must be 0 or more.'],
+  eFasal: ['फसल बिक्री आमदनी है, खर्च नहीं।', 'Fasal Bikri is income, not expense.'],
+  eOver: ['रकम बाकी से ज़्यादा है।', 'Amount exceeds the balance.'],
+  totalBill: ['कुल काम / बिल', 'Total Kaam / Bill'],
+  totalPaid: ['कुल भुगतान', 'Total Paid (Bhugtan)'],
+  baki: ['बाकी', 'Baki (Remaining)'],
+  chukta: ['₹0 (चुकता)', '₹0 (Chukta)'],
+  advance: ['अग्रिम', 'Advance'],
+  lenaBaki: ['लेना बाकी', 'Lena Baki'],
+  recvd: ['प्राप्त', 'Received'],
+  partyHdr: ['मज़दूर / पार्टी हिसाब', 'Worker / Party Statement'],
+  noParty: ['अभी कोई नाम वाला हिसाब नहीं।', 'No named party entries yet.'],
+  share: ['📲 WhatsApp पर हिसाब भेजें', '📲 Share Hisab on WhatsApp'],
+  settle: ['✅ चुकता करें', '✅ Settle (Chukta)'],
+  settleTitle: ['चुकता (Settle)', 'Settle (Chukta)'],
+  settleSave: ['भुगतान दर्ज करें', 'Log settlement'],
+  settleInfo: ['{n}: बाकी {a}', '{n}: balance {a}'],
+  shareTitle: ['हिसाब संदेश', 'Hisab message'],
+  openWa: ['WhatsApp खोलें', 'Open WhatsApp'],
+  copyText: ['📋 कॉपी करें', '📋 Copy Text'],
+  copied: ['कॉपी हो गया।', 'Copied.'],
+  copyFail: ['कॉपी नहीं हुआ — टेक्स्ट चुनकर कॉपी करें।', 'Copy failed — select the text and copy manually.'],
+  stHdr: ['हिसाब', 'Hisab'], stName: ['नाम', 'Name'], stKaam: ['काम/बिल', 'Kaam/Bill'], stPaid: ['भुगतान', 'Payment'],
+  stRecv: ['लेना', 'Lena'], stRecvd: ['प्राप्त', 'Received'], stTotalBill: ['कुल बिल', 'Total Bill'], stTotalPaid: ['कुल भुगतान', 'Total Paid'], stBaki: ['बाकी', 'Baki'],
+  crop_wheat: ['गेहूँ', 'Gehu (Wheat)'], crop_soybean: ['सोयाबीन', 'Soybean'], crop_chana: ['चना', 'Chana'], crop_rice: ['धान (चावल)', 'Rice (Dhan)'], crop_maize: ['मक्का', 'Maize'],
+  expense: ['खर्च', 'Expense'], income: ['आमदनी', 'Income'], payment: ['भुगतान', 'Payment'],
+  noPartyName: ['(बिना नाम)', '(no name)'],
+  tankUnit: ['{n} स्प्रे टंकी (20 लीटर) — {i}', '{n} Spray Tanks of 20L — {i}'],
+  acreUnit: ['{n} एकड़ — {i}', '{n} acre — {i}']
+};
+var CROPS = ['wheat', 'soybean', 'chana', 'rice', 'maize'];
+var CATS = [['beej', '🌱'], ['khad', '🧪'], ['dawai', '🧴'], ['tractor', '🚜'], ['majdoori', '👷'], ['fasal', '🌾']];
+var KEY = 'khetkhata-v3';
+var VERSION = 3;
+
+/* Per-acre templates for the 5 stages. k: kg | tank | acre; p: qty per acre; c: cost per acre (INR) */
+var STAGE_DAYS = [1, 25, 50, 80, 105];
+var STAGE_RANGE = [[1, 20], [21, 45], [46, 75], [76, 100], [101, 120]];
+function S5(a) { return a.map(function (x) { return { i: { hi: x[0], en: x[1] }, k: x[2], p: x[3], c: x[4], cat: x[5] }; }); }
+var TEMPLATES = {
+  wheat: S5([['डीएपी', 'DAP', 'kg', 50, 1350, 'khad'], ['यूरिया', 'Urea', 'kg', 50, 300, 'khad'], ['खरपतवार दवा (क्लोडिनाफॉप)', 'Weedicide (Clodinafop)', 'tank', 2, 600, 'dawai'], ['फफूंदनाशक (प्रोपिकोनाज़ोल)', 'Fungicide (Propiconazole)', 'tank', 2, 700, 'dawai'], ['कंबाइन कटाई', 'Combine Harvesting', 'acre', 1, 1200, 'tractor']]),
+  soybean: S5([['एसएसपी', 'SSP', 'kg', 100, 800, 'khad'], ['खरपतवार दवा (इमेज़ाथापायर)', 'Weedicide (Imazethapyr)', 'tank', 2, 600, 'dawai'], ['कीटनाशक (क्लोरेंट्रानिलिप्रोल)', 'Insecticide (Chlorantraniliprole)', 'tank', 2, 800, 'dawai'], ['फफूंदनाशक (रतुआ)', 'Fungicide (Rust)', 'tank', 2, 700, 'dawai'], ['कटाई / थ्रेशिंग', 'Harvest / Threshing', 'acre', 1, 1500, 'tractor']]),
+  chana: S5([['डीएपी', 'DAP', 'kg', 40, 1080, 'khad'], ['खरपतवार दवा', 'Weedicide', 'tank', 2, 500, 'dawai'], ['कीटनाशक (इल्ली)', 'Insecticide (Pod borer)', 'tank', 2, 800, 'dawai'], ['सूक्ष्म पोषक तत्व', 'Micronutrient mix', 'tank', 2, 450, 'khad'], ['कटाई', 'Harvesting', 'acre', 1, 1200, 'tractor']]),
+  rice: S5([['डीएपी', 'DAP', 'kg', 50, 1350, 'khad'], ['यूरिया', 'Urea', 'kg', 40, 240, 'khad'], ['खरपतवार दवा (ब्यूटाक्लोर)', 'Weedicide (Butachlor)', 'tank', 2, 600, 'dawai'], ['कीटनाशक (तना छेदक)', 'Insecticide (Stem borer)', 'tank', 2, 900, 'dawai'], ['कटाई', 'Harvesting', 'acre', 1, 1800, 'tractor']]),
+  maize: S5([['डीएपी', 'DAP', 'kg', 50, 1350, 'khad'], ['यूरिया', 'Urea', 'kg', 50, 300, 'khad'], ['खरपतवार दवा (एट्राज़ीन)', 'Weedicide (Atrazine)', 'tank', 2, 500, 'dawai'], ['कीटनाशक (फॉल आर्मीवर्म)', 'Insecticide (Fall armyworm)', 'tank', 2, 900, 'dawai'], ['कटाई / शेलिंग', 'Harvest / Shelling', 'acre', 1, 1500, 'tractor']])
+};
+
+/* ================= state ================= */
+var S = null, tab = 'home', openParties = {}, draft = { type: 'expense', cat: 'khad', mode: 'cash', dir: 'out', att: null };
+var recog = null, recogTimer = null, toastTimer = null, shareLink = '', storageOK = true;
+
+function lang() { return S && S.lang === 'en' ? 1 : 0; }
+function t(k, v) {
+  var s = (T[k] || [k, k])[lang()];
+  if (v) Object.keys(v).forEach(function (n) { s = s.split('{' + n + '}').join(v[n]); });
+  return s;
+}
+function $(s) { return document.querySelector(s); }
+function esc(x) { return String(x == null ? '' : x).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+function r2(n) { return Math.round(n * 100) / 100; }
+function money(n) { return '₹' + r2(n).toLocaleString('en-IN', { maximumFractionDigits: 2 }); }
+function pad(n) { return (n < 10 ? '0' : '') + n; }
+function iso(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+function today() { return iso(new Date()); }
+function parse(s) { var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || ''); if (!m) return null; var d = new Date(+m[1], +m[2] - 1, +m[3]); return iso(d) === s ? d : null; }
+function addDays(s, n) { var d = parse(s); d.setDate(d.getDate() + n); return iso(d); }
+function dayDiff(a, b) { var x = parse(a), y = parse(b); return Math.round((Date.UTC(y.getFullYear(), y.getMonth(), y.getDate()) - Date.UTC(x.getFullYear(), x.getMonth(), x.getDate())) / 86400000); }
+function fmtD(s) { var d = parse(s); return d ? pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + '/' + d.getFullYear() : s; }
+function stageOf(day) { for (var i = 0; i < 5; i++) if (day <= STAGE_RANGE[i][1]) return i; return 4; }
+function plotById(id) { return S.plots.filter(function (p) { return p.id === id; })[0]; }
+function activePlot() { return plotById(S.activePlotId) || null; }
+
+/* ================= schedule ================= */
+function genTasks(plot) {
+  return TEMPLATES[plot.crop].map(function (x, i) {
+    var qty = x.k === 'tank' ? Math.ceil(x.p * plot.acres) : r2(x.p * plot.acres);
+    return { id: uid(), plotId: plot.id, stage: i + 1, auto: true, edited: false, day: STAGE_DAYS[i], name: '', item: x.i, kind: x.k, perAcre: x.p, qty: qty,
+      doseText: '', cost: Math.round(x.c * plot.acres), cat: x.cat, status: 'pending', entryId: null };
+  });
+}
+function syncTasks(plot) {
+  S.tasks = S.tasks.filter(function (k) { return !(k.plotId === plot.id && k.auto && !k.edited && k.status === 'pending'); });
+  var have = {};
+  S.tasks.forEach(function (k) { if (k.plotId === plot.id && k.auto) have[k.stage] = true; });
+  genTasks(plot).forEach(function (g) { if (!have[g.stage]) S.tasks.push(g); });
+}
+function doseText(k) {
+  if (k.doseText) return k.doseText;
+  if (!k.item) return '';
+  var i = k.item[lang() ? 'en' : 'hi'];
+  if (k.kind === 'kg') return k.qty + ' kg ' + i + ' (' + k.perAcre + ' kg/' + t('acres').replace(/s$/, '') + ')';
+  if (k.kind === 'tank') return t('tankUnit', { n: k.qty, i: i });
+  return t('acreUnit', { n: k.qty, i: i });
+}
+function taskTitle(k) { return k.name || (k.stage ? t('stage' + k.stage) : ''); }
+
+/* ================= seed / load / save ================= */
+function seed() {
+  var td = today(), sow = addDays(td, -45), pid = uid();
+  var plot = { id: pid, name: 'Bada Khet', acres: 5, crop: 'wheat', sowDate: sow, batai: 0, season: 'Rabi 2026-27' };
+  var st = { version: VERSION, lang: 'hi', activePlotId: pid, plots: [plot], tasks: [], entries: [] };
+  S = st;
+  S.tasks = genTasks(plot);
+  function add(o) { var e = Object.assign({ id: uid(), plotId: pid, notes: '', attachment: null, taskId: null, dir: 'out', party: '' }, o); S.entries.push(e); return e; }
+  S.tasks.slice(0, 2).forEach(function (k, i) {
+    var e = add({ type: 'expense', category: k.cat, date: addDays(sow, k.day - 1), amount: k.cost, mode: i === 0 ? 'credit' : 'cash', party: 'Sharma Krishi Kendra', notes: k.item.en, taskId: k.id });
+    k.status = 'done'; k.entryId = e.id;
+  });
+  add({ type: 'expense', category: 'beej', date: addDays(sow, -2), amount: 7000, mode: 'cash', party: 'Sharma Krishi Kendra', notes: 'Gehu beej 200 kg' });
+  add({ type: 'expense', category: 'tractor', date: addDays(sow, -1), amount: 3500, mode: 'credit', party: 'Kisan Tractor Service', notes: 'Jutai + buwai diesel' });
+  add({ type: 'expense', category: 'majdoori', date: sow, amount: 2400, mode: 'credit', party: 'Ramu', notes: '4 din buwai' });
+  add({ type: 'payment', category: 'majdoori', date: addDays(sow, 5), amount: 1000, mode: 'cash', party: 'Ramu', notes: 'Advance', dir: 'out' });
+  add({ type: 'expense', category: 'majdoori', date: addDays(sow, 26), amount: 1800, mode: 'cash', party: 'Sunita', notes: 'Urea chhidkav 3 din' });
+  add({ type: 'income', category: 'fasal', date: addDays(sow, 30), amount: 8000, mode: 'credit', party: 'Gupta Trader', notes: 'Fasal advance booking' });
+  add({ type: 'payment', category: 'fasal', date: addDays(sow, 35), amount: 3000, mode: 'cash', party: 'Gupta Trader', notes: 'Pehli kisht', dir: 'in' });
+  return S;
+}
+function validate(o) {
+  if (!o || typeof o !== 'object') return 'not an object';
+  if (o.version !== VERSION) return 'version';
+  if (!Array.isArray(o.plots) || !Array.isArray(o.tasks) || !Array.isArray(o.entries)) return 'lists';
+  var ids = {}, i;
+  for (i = 0; i < o.plots.length; i++) {
+    var p = o.plots[i];
+    if (!p || typeof p.id !== 'string' || !p.id || ids[p.id]) return 'plot id';
+    ids[p.id] = 1;
+    if (typeof p.name !== 'string' || !p.name.trim()) return 'plot name';
+    if (typeof p.acres !== 'number' || !(p.acres > 0) || !isFinite(p.acres)) return 'plot acres';
+    if (CROPS.indexOf(p.crop) < 0) return 'plot crop';
+    if (!parse(p.sowDate)) return 'plot date';
+    if (typeof p.batai !== 'number' || p.batai < 0 || p.batai > 100) return 'plot batai';
+  }
+  for (i = 0; i < o.tasks.length; i++) {
+    var k = o.tasks[i];
+    if (!k || !ids[k.plotId] || typeof k.id !== 'string') return 'task';
+    if (['pending', 'done', 'skipped'].indexOf(k.status) < 0) return 'task status';
+    if (typeof k.day !== 'number' || typeof k.cost !== 'number' || k.cost < 0) return 'task numbers';
+  }
+  for (i = 0; i < o.entries.length; i++) {
+    var e = o.entries[i];
+    if (!e || !ids[e.plotId] || typeof e.id !== 'string') return 'entry';
+    if (['expense', 'income', 'payment'].indexOf(e.type) < 0) return 'entry type';
+    if (typeof e.amount !== 'number' || !(e.amount > 0) || !isFinite(e.amount)) return 'entry amount';
+    if (!parse(e.date)) return 'entry date';
+    if (['cash', 'credit'].indexOf(e.mode) < 0) return 'entry mode';
+    if ((e.mode === 'credit' || e.type === 'payment') && !String(e.party || '').trim()) return 'entry party';
+  }
+  if (o.activePlotId && !ids[o.activePlotId]) return 'active plot';
+  return null;
+}
+function load() {
+  var raw = null;
+  try { raw = localStorage.getItem(KEY); } catch (e) { storageOK = false; }
+  if (raw) {
+    try {
+      var o = JSON.parse(raw);
+      if (!validate(o)) { S = o; if (S.lang !== 'en') S.lang = 'hi'; return; }
+    } catch (e) { /* fall through */ }
+    try { localStorage.setItem(KEY + '-corrupt', raw); } catch (e2) { /* ignore */ }
+    seed(); save(); setTimeout(function () { toast(t('corrupt')); }, 300); return;
+  }
+  seed(); save();
+}
+function save() {
+  try { S.savedAt = new Date().toISOString(); localStorage.setItem(KEY, JSON.stringify(S)); storageOK = true; return true; } catch (e) { storageOK = false; return false; }
+}
+function commit(fn) {
+  var snap = JSON.stringify(S);
+  fn();
+  if (!save()) { S = JSON.parse(snap); render(); toast(t('storageFail')); return false; }
+  render();
+  return true;
+}
+function toast(m) {
+  var el = $('#toast'); el.textContent = m; el.className = 'toast show';
+  clearTimeout(toastTimer); toastTimer = setTimeout(function () { el.className = 'toast'; }, 3800);
+}
+
+/* ================= calculations ================= */
+function entriesOf(pid) { return S.entries.filter(function (e) { return e.plotId === pid; }); }
+function partyKey(n) { return String(n || '').trim().toLowerCase(); }
+function parties(pid) {
+  var m = {}, order = [];
+  entriesOf(pid).forEach(function (e) {
+    var n = String(e.party || '').trim(); if (!n) return;
+    var k = partyKey(n);
+    if (!m[k]) { m[k] = { key: k, name: n, bill: 0, paid: 0, recvBill: 0, recvIn: 0, rows: [], cat: 'majdoori' }; order.push(k); }
+    var p = m[k];
+    p.rows.push(e);
+    if (e.type === 'expense') { p.bill += e.amount; if (e.mode === 'cash') p.paid += e.amount; p.cat = e.category; }
+    else if (e.type === 'income') { if (e.mode === 'credit') p.recvBill += e.amount; }
+    else if (e.type === 'payment') { if (e.dir === 'in') p.recvIn += e.amount; else p.paid += e.amount; }
+  });
+  return order.map(function (k) {
+    var p = m[k]; p.bill = r2(p.bill); p.paid = r2(p.paid); p.recvBill = r2(p.recvBill); p.recvIn = r2(p.recvIn);
+    p.baki = r2(p.bill - p.paid); p.lena = r2(p.recvBill - p.recvIn);
+    p.rows.sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : (a.id < b.id ? -1 : 1); });
+    return p;
+  });
+}
+function totals(pid) {
+  var inv = 0, inc = 0;
+  entriesOf(pid).forEach(function (e) { if (e.type === 'expense') inv += e.amount; else if (e.type === 'income') inc += e.amount; });
+  var dena = 0, lena = 0;
+  parties(pid).forEach(function (p) { if (p.baki > 0) dena += p.baki; if (p.lena > 0) lena += p.lena; });
+  return { inv: r2(inv), inc: r2(inc), net: r2(inc - inv), dena: r2(dena), lena: r2(lena) };
+}
+
+/* ================= render ================= */
+function applyStatic() {
+  document.documentElement.lang = lang() ? 'en' : 'hi';
+  $('#appTitle').textContent = t('appTitle');
+  $('#btnLang').textContent = lang() ? 'हिं' : 'EN';
+  $('#tab-home').textContent = '🏠 ' + t('tabHome');
+  $('#tab-doctor').textContent = '🩺 ' + t('tabDoctor');
+  $('#tab-khata').textContent = '📒 ' + t('tabKhata');
+  $('#tab-party').textContent = '👥 ' + t('tabParty');
+  ['home', 'doctor', 'khata', 'party'].forEach(function (x) { $('#tab-' + x).setAttribute('aria-selected', String(tab === x)); });
+  document.querySelectorAll('[data-i]').forEach(function (el) { el.textContent = t(el.getAttribute('data-i')); });
+  $('#micBtn').textContent = recog ? t('micStop') : t('mic');
+  fillSelect($('#plotCrop'), CROPS.map(function (c) { return [c, t('crop_' + c)]; }));
+  fillSelect($('#taskCat'), CATS.filter(function (c) { return c[0] !== 'fasal'; }).map(function (c) { return [c[0], c[1] + ' ' + t('cat_' + c[0])]; }));
+  fillSelect($('#taskStatus'), ['pending', 'done', 'skipped'].map(function (s) { return [s, t(s)]; }));
+}
+function fillSelect(sel, opts) {
+  var cur = sel.value;
+  sel.innerHTML = opts.map(function (o) { return '<option value="' + esc(o[0]) + '">' + esc(o[1]) + '</option>'; }).join('');
+  if (cur) sel.value = cur;
+}
+function render() {
+  applyStatic();
+  var p = activePlot(), html = '';
+  if (!p) html = plotBarHtml();
+  else if (tab === 'home') html = plotBarHtml(true) + heroHtml(p) + tilesHtml();
+  else if (tab === 'plots') html = backHtml('tilePlots') + plotBarHtml();
+  else if (tab === 'data') html = backHtml('dataTitle') + dataHtml();
+  else {
+    var x = totals(p.id);
+    html = backHtml('tab' + (tab === 'doctor' ? 'Doctor' : tab === 'khata' ? 'Khata' : 'Party')) +
+      '<div class="muted" style="margin:0 14px"><b>' + esc(p.name) + '</b> · ' + t('vasooli') + ': <b>' + (x.net >= 0 ? '+' : '−') + money(Math.abs(x.net)) + '</b></div>' +
+      (tab === 'doctor' ? doctorHtml(p) : tab === 'khata' ? khataHtml(p) : partyHtml(p));
+  }
+  $('#app').innerHTML = html;
+  var dl = $('#partyList');
+  var names = {}; (p ? entriesOf(p.id) : []).forEach(function (e) { if (e.party && e.party.trim()) names[partyKey(e.party)] = e.party.trim(); });
+  S.entries.forEach(function (e) { if (e.party && e.party.trim() && !names[partyKey(e.party)]) names[partyKey(e.party)] = e.party.trim(); });
+  dl.innerHTML = Object.keys(names).map(function (k) { return '<option value="' + esc(names[k]) + '">'; }).join('');
+}
+function backHtml(titleKey) {
+  return '<div class="card row" style="align-items:center"><button type="button" class="btn" data-act="tab" data-tab="home">' + t('back') + '</button><b class="grow" style="font-size:18px">' + t(titleKey) + '</b></div>';
+}
+function tilesHtml() {
+  var tl = [['addentry', '➕', 'tileNaya', 'btn-a'], ['tab:party', '👥', 'tileParty', ''], ['tab:doctor', '🩺', 'tileDoctor', ''], ['tab:khata', '📒', 'tileKhata', ''], ['tab:plots', '🌾', 'tilePlots', ''], ['tab:data', '💾', 'tileData', '']];
+  return '<section class="card"><div class="catgrid" style="grid-template-columns:1fr 1fr">' + tl.map(function (x) {
+    var tabAttr = x[0].indexOf('tab:') === 0 ? ' data-act="tab" data-tab="' + x[0].slice(4) + '"' : ' data-act="' + x[0] + '"';
+    return '<button type="button" class="btn ' + x[3] + '" style="min-height:96px;flex-direction:column;font-size:16px"' + tabAttr + '><span style="font-size:34px">' + x[1] + '</span>' + t(x[2]) + '</button>';
+  }).join('') + '</div></section>';
+}
+function dataHtml() {
+  var raw = ''; try { raw = localStorage.getItem(KEY) || ''; } catch (e) { /* ignore */ }
+  var sv = S.savedAt ? new Date(S.savedAt).toLocaleString() : '-';
+  return '<section class="card"><p style="font-weight:700">' + (storageOK && raw ? t('dStatusOk') : t('dStatusBad')) + '</p>' +
+    '<p class="muted">' + t('dWhere', { k: KEY }) + '</p>' +
+    '<p class="muted" id="dataSize">' + t('dSize', { s: (raw.length / 1024).toFixed(1), p: S.plots.length, t: S.tasks.length, e: S.entries.length }) + '</p>' +
+    '<p class="muted">' + t('dSaved', { x: sv }) + '</p><p class="muted">' + t('dWarn') + '</p>' +
+    '<div class="acts" style="flex-direction:column"><button type="button" class="btn btn-p" data-act="export">' + t('dExport') + '</button><button type="button" class="btn" data-act="import">' + t('dImport') + '</button><button type="button" class="btn" data-act="persist">' + t('dPersist') + '</button></div></section>';
+}
+function plotBarHtml(compact) {
+  var p = activePlot();
+  var h = '<section class="card" aria-label="Plots"><div class="scroll">';
+  S.plots.forEach(function (x) {
+    h += '<button type="button" class="chip" data-act="selplot" data-id="' + esc(x.id) + '" aria-pressed="' + (x.id === S.activePlotId) + '">' + esc(x.name) + '</button>';
+  });
+  h += '<button type="button" class="btn btn-a" data-act="addplot">' + t('nayaKhet') + '</button></div>';
+  if (p) {
+    h += '<div style="margin-top:10px"><b style="font-size:18px">' + esc(p.name) + '</b>' + (p.season ? ' <span class="badge">' + esc(p.season) + '</span>' : '') +
+      '<div class="muted">' + r2(p.acres) + ' ' + t('acres') + ' · ' + t('crop_' + p.crop) + ' · ' + t('sownOn') + ': ' + fmtD(p.sowDate) + (p.batai ? ' · Batai ' + p.batai + '%' : '') + '</div>' +
+      (compact ? '' : '<div class="acts"><button type="button" class="btn btn-sm" data-act="editplot">' + t('editPlot') + '</button><button type="button" class="btn btn-sm btn-d" data-act="delplot">' + t('delPlot') + '</button></div>') + '</div>';
+  } else h += '<p>' + t('noPlot') + '</p>';
+  return h + '</section>';
+}
+function heroHtml(p) {
+  var x = totals(p.id), pct = x.inv > 0 ? Math.min(100, Math.round(x.inc / x.inv * 100)) : (x.inc > 0 ? 100 : 0), win = x.inc >= x.inv && x.inc > 0;
+  var h = '<section class="card hero" aria-label="Vasooli"><div class="grid2">' +
+    '<div class="kv"><small>' + t('kulKharch') + '</small><b>' + money(x.inv) + '</b></div>' +
+    '<div class="kv"><small>' + t('kulAamdani') + '</small><b>' + money(x.inc) + '</b></div></div>' +
+    '<div class="kv" style="margin-top:10px"><small>' + t('vasooli') + ' — ' + (x.net >= 0 ? t('munafa') : t('vasooliBaki')) + '</small><b id="heroNet" style="font-size:26px;color:' + (x.net >= 0 ? '#6EE7B7' : '#FDE68A') + '">' + (x.net >= 0 ? '+' : '−') + money(Math.abs(x.net)) + '</b></div>' +
+    '<div class="bar' + (win ? ' win' : '') + '" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '" aria-label="' + t('breakEven') + '" style="margin-top:6px"><i style="width:' + pct + '%"></i></div>' +
+    '<div class="muted" style="color:#d6ecd8">' + t('breakEven') + ': ' + pct + '%</div>' +
+    '<div class="grid2" style="margin-top:10px"><div class="kv"><small>' + t('denaHai') + '</small><b>' + money(x.dena) + '</b></div><div class="kv"><small>' + t('lenaHai') + '</small><b>' + money(x.lena) + '</b></div></div>' +
+    '<div class="kv" style="margin-top:10px"><small>' + t('perAcre') + '</small><b>' + money(x.inv / p.acres) + '</b></div>';
+  if (p.batai > 0) {
+    var b = r2(x.net * p.batai / 100), o = r2(x.net - b);
+    h += '<div class="kv" style="margin-top:10px"><small>' + t('bataiSplit') + ' (' + (100 - p.batai) + '/' + p.batai + ')</small><b>' + t('malik') + ' ' + (o < 0 ? '−' : '') + money(Math.abs(o)) + ' · ' + t('bataiwala') + ' ' + (b < 0 ? '−' : '') + money(Math.abs(b)) + '</b></div>';
+  }
+  return h + '</section>';
+}
+function doctorHtml(p) {
+  var day = dayDiff(p.sowDate, today()) + 1, cur = day < 1 ? -1 : stageOf(day);
+  var tasks = S.tasks.filter(function (k) { return k.plotId === p.id; }).sort(function (a, b) { return a.day - b.day; });
+  var h = '<section class="card"><b>' + t('timeline') + '</b>' + (day < 1 ? '<div class="muted">' + t('notSown', { n: 1 - day }) + '</div>' : '<div class="muted">' + t('dayN', { n: day }) + '</div>') + '<div class="tl" style="margin-top:8px">';
+  for (var i = 0; i < 5; i++) {
+    var ts = tasks.filter(function (k) { return stageOf(k.day) === i; }), dn = ts.filter(function (k) { return k.status === 'done'; }).length;
+    h += '<div class="stagebox' + (i === cur ? ' cur' : '') + '"' + (i === cur ? ' aria-current="step"' : '') + '><b>' + (i + 1) + '. ' + t('stage' + (i + 1)) + '</b><div>' + t('dayN', { n: STAGE_RANGE[i][0] + '–' + STAGE_RANGE[i][1] }) + '</div><div>' + dn + '/' + ts.length + ' ✅</div>' + (i === cur ? '<span class="badge pending">' + t('current') + '</span>' : '') + '</div>';
+  }
+  h += '</div><p class="muted">' + t('doseNote') + '</p><button type="button" class="btn btn-a" data-act="addtask">' + t('addTask') + '</button></section>';
+  if (!tasks.length) h += '<section class="card">' + t('noTasks') + '</section>';
+  tasks.forEach(function (k) {
+    var si = stageOf(k.day);
+    h += '<section class="card" data-task="' + esc(k.id) + '"><div class="row"><div class="grow"><b>' + esc(taskTitle(k)) + '</b> <span class="badge ' + k.status + '">' + t(k.status) + '</span>' +
+      '<div class="muted">' + (si + 1) + '. ' + t('stage' + (si + 1)) + ' · ' + t('dayN', { n: k.day }) + ' · ' + fmtD(addDays(p.sowDate, k.day - 1)) + '</div>' +
+      '<div style="margin-top:4px">' + esc(doseText(k)) + '</div><div style="margin-top:4px"><b>' + money(k.cost) + '</b> <span class="muted">(' + t('estCost') + ')</span></div></div></div>' +
+      '<div class="acts"><button type="button" class="btn btn-sm" data-act="speak" data-id="' + esc(k.id) + '">' + t('listen') + '</button>' +
+      (k.status !== 'done' ? '<button type="button" class="btn btn-sm btn-p" data-act="done" data-id="' + esc(k.id) + '">' + t('doneBtn') + '</button>' : '') +
+      '<button type="button" class="btn btn-sm" data-act="edittask" data-id="' + esc(k.id) + '" aria-label="Edit">✏️</button>' +
+      '<button type="button" class="btn btn-sm btn-d" data-act="deltask" data-id="' + esc(k.id) + '" aria-label="Delete">🗑️</button></div></section>';
+  });
+  return h;
+}
+function catIcon(c) { var f = CATS.filter(function (x) { return x[0] === c; })[0]; return f ? f[1] : '📝'; }
+function khataHtml(p) {
+  var es = entriesOf(p.id).sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : (a.id < b.id ? 1 : -1); });
+  var h = '<section class="card"><button type="button" class="btn btn-a" style="width:100%" data-act="addentry">' + t('naya') + '</button></section>';
+  if (!es.length) return h + '<section class="card">' + t('noEntries') + '</section>';
+  es.forEach(function (e) {
+    var sign = e.type === 'income' ? '+' : e.type === 'payment' ? (e.dir === 'in' ? '+' : '−') : '−';
+    var good = sign === '+';
+    h += '<section class="card" data-entry="' + esc(e.id) + '"><div class="row"><div style="font-size:28px">' + catIcon(e.category) + '</div><div class="grow"><b>' + esc(t('cat_' + e.category)) + '</b> <span class="badge">' + t(e.type === 'expense' ? 'kharch' : e.type === 'income' ? 'aamdani' : 'bhugtan').split(' ')[0] + '</span>' +
+      (e.mode === 'credit' ? ' <span class="badge credit">' + t('udhaar').split(' ')[0] + '</span>' : '') +
+      '<div class="muted">' + fmtD(e.date) + (e.party ? ' · ' + esc(e.party) : '') + '</div>' + (e.notes ? '<div>' + esc(e.notes) + '</div>' : '') + '</div>' +
+      '<div style="text-align:right"><b style="font-size:18px;color:' + (good ? '#047857' : '#B71C1C') + '">' + sign + money(e.amount) + '</b>' +
+      (e.attachment ? '<div><button type="button" class="btn btn-sm" data-act="viewatt" data-id="' + esc(e.id) + '" aria-label="' + t('view') + '">' + (e.attachment.kind === 'image' ? '<img class="thumb" alt="" src="' + esc(e.attachment.data) + '">' : '📄') + '</button></div>' : '') + '</div></div>' +
+      '<div class="acts"><button type="button" class="btn btn-sm" data-act="editentry" data-id="' + esc(e.id) + '" aria-label="Edit">✏️</button><button type="button" class="btn btn-sm btn-d" data-act="delentry" data-id="' + esc(e.id) + '" aria-label="Delete">🗑️</button></div></section>';
+  });
+  return h;
+}
+function partyHtml(p) {
+  var ps = parties(p.id);
+  var h = '<section class="card"><b>' + t('partyHdr') + '</b></section>';
+  if (!ps.length) return h + '<section class="card">' + t('noParty') + '</section>';
+  ps.forEach(function (q) {
+    var bakiTxt = q.baki < 0 ? t('advance') + ' ' + money(-q.baki) : (q.baki === 0 && q.bill > 0 ? t('chukta') : money(q.baki));
+    var open = openParties[q.key] ? ' open' : '';
+    h += '<section class="card" data-party="' + esc(q.key) + '"><details data-key="' + esc(q.key) + '"' + open + '><summary><div class="grow"><b style="font-size:17px">' + esc(q.name) + '</b></div></summary>' +
+      '<div class="grid2">' + (q.bill || q.paid ? '<div class="kv"><small>' + t('totalBill') + '</small><b>' + money(q.bill) + '</b></div><div class="kv"><small>' + t('totalPaid') + '</small><b>' + money(q.paid) + '</b></div>' +
+      '<div class="kv" style="grid-column:span 2"><small>' + t('baki') + '</small><b class="baki" style="color:' + (q.baki > 0 ? '#B71C1C' : '#047857') + '">' + bakiTxt + '</b></div>' : '') +
+      (q.recvBill || q.recvIn ? '<div class="kv"><small>' + t('lenaBaki') + '</small><b>' + money(q.lena) + '</b></div><div class="kv"><small>' + t('recvd') + '</small><b>' + money(q.recvIn) + '</b></div>' : '') + '</div>' +
+      '<ol style="padding-left:20px;margin:10px 0">';
+    q.rows.forEach(function (e) {
+      var lbl = e.type === 'payment' ? (e.dir === 'in' ? t('recvd') : t('stPaid')) : e.type === 'income' ? t('stRecv') : t('stKaam') + ' · ' + t('cat_' + e.category).split(' ')[0];
+      h += '<li style="margin:6px 0">' + fmtD(e.date) + ' — ' + esc(lbl) + (e.notes ? ' (' + esc(e.notes) + ')' : '') + ' <b>' + money(e.amount) + '</b></li>';
+    });
+    h += '</ol><div class="acts"><button type="button" class="btn btn-sm btn-p" data-act="share" data-key="' + esc(q.key) + '">' + t('share') + '</button>' +
+      ((q.baki > 0 || q.lena > 0) ? '<button type="button" class="btn btn-sm btn-a" data-act="settle" data-key="' + esc(q.key) + '">' + t('settle') + '</button>' : '') + '</div></details></section>';
+  });
+  return h;
+}
+
+/* ================= modals ================= */
+function openM(id) { $('#' + id).classList.add('open'); var f = $('#' + id).querySelector('input:not([type=hidden]),select,textarea'); if (f) setTimeout(function () { try { f.focus(); } catch (e) { /* ignore */ } }, 30); }
+function closeM(id) { if (id === 'entryModal') stopMic(); $('#' + id).classList.remove('open'); }
+function chipSet(el, opts, cur, onPick) {
+  el.innerHTML = opts.map(function (o) { return '<button type="button" class="chip" data-v="' + esc(o[0]) + '" aria-pressed="' + (o[0] === cur) + '">' + esc(o[1]) + '</button>'; }).join('');
+  el.onclick = function (ev) { var b = ev.target.closest('[data-v]'); if (!b) return; onPick(b.getAttribute('data-v')); };
+}
+function showPlotForm(p) {
+  $('#plotTitle').textContent = p ? t('editPlotTitle') : t('addPlotTitle');
+  $('#plotId').value = p ? p.id : '';
+  $('#plotName').value = p ? p.name : '';
+  $('#plotAcres').value = p ? p.acres : '';
+  $('#plotCrop').value = p ? p.crop : 'wheat';
+  $('#plotSow').value = p ? p.sowDate : today();
+  $('#plotSeason').value = p ? (p.season || '') : '';
+  $('#plotBatai').value = p && p.batai ? p.batai : '';
+  $('#plotErr').textContent = '';
+  openM('plotModal');
+}
+function savePlot(ev) {
+  ev.preventDefault();
+  var id = $('#plotId').value, name = $('#plotName').value.trim(), acres = parseFloat($('#plotAcres').value), sow = $('#plotSow').value, bt = $('#plotBatai').value === '' ? 0 : parseFloat($('#plotBatai').value);
+  var err = !name ? 'eName' : !(acres > 0) || !isFinite(acres) ? 'eAcres' : !parse(sow) ? 'eDate' : !(bt >= 0 && bt <= 100) ? 'eBatai' : '';
+  if (err) { $('#plotErr').textContent = t(err); return; }
+  var ok = commit(function () {
+    var p = id ? plotById(id) : null;
+    if (!p) { p = { id: uid() }; S.plots.push(p); }
+    p.name = name; p.acres = r2(acres); p.crop = $('#plotCrop').value; p.sowDate = sow; p.batai = bt; p.season = $('#plotSeason').value.trim();
+    S.activePlotId = p.id;
+    syncTasks(p);
+  });
+  if (ok) closeM('plotModal');
+}
+function showTaskForm(k) {
+  $('#taskTitle').textContent = k ? t('editTaskTitle') : t('addTaskTitle');
+  $('#taskId').value = k ? k.id : '';
+  $('#taskName').value = k ? taskTitle(k) : '';
+  $('#taskDay').value = k ? k.day : '';
+  $('#taskDose').value = k ? doseText(k) : '';
+  $('#taskCost').value = k ? k.cost : '';
+  $('#taskCat').value = k ? k.cat : 'khad';
+  $('#taskStatus').value = k ? k.status : 'pending';
+  $('#taskErr').textContent = '';
+  openM('taskModal');
+}
+function saveTask(ev) {
+  ev.preventDefault();
+  var id = $('#taskId').value, name = $('#taskName').value.trim(), day = parseInt($('#taskDay').value, 10), cost = $('#taskCost').value === '' ? 0 : parseFloat($('#taskCost').value);
+  var err = !name ? 'eName' : !(day >= 1 && day <= 365) ? 'eDay' : !(cost >= 0) || !isFinite(cost) ? 'eCost' : '';
+  if (err) { $('#taskErr').textContent = t(err); return; }
+  var ok = commit(function () {
+    var k = S.tasks.filter(function (x) { return x.id === id; })[0];
+    if (!k) { k = { id: uid(), plotId: S.activePlotId, stage: 0, auto: false, edited: false, name: '', item: null, kind: '', perAcre: 0, qty: 0, entryId: null }; S.tasks.push(k); }
+    k.name = name; k.day = day; k.doseText = $('#taskDose').value.trim(); k.cost = r2(cost); k.cat = $('#taskCat').value; k.status = $('#taskStatus').value; k.edited = true;
+  });
+  if (ok) closeM('taskModal');
+}
+var doneMode = 'cash';
+function showDone(k) {
+  $('#doneTaskId').value = k.id;
+  $('#doneTask').textContent = taskTitle(k) + ' — ' + doseText(k);
+  $('#doneAmount').value = k.cost || '';
+  $('#doneParty').value = '';
+  $('#doneDate').value = today();
+  $('#doneErr').textContent = '';
+  doneMode = 'cash';
+  drawDoneMode();
+  openM('doneModal');
+}
+function drawDoneMode() { chipSet($('#doneMode'), [['cash', t('nagad')], ['credit', t('udhaar')]], doneMode, function (v) { doneMode = v; drawDoneMode(); }); }
+function saveDone(ev) {
+  ev.preventDefault();
+  var k = S.tasks.filter(function (x) { return x.id === $('#doneTaskId').value; })[0]; if (!k) return;
+  var amt = parseFloat($('#doneAmount').value), party = $('#doneParty').value.trim(), date = $('#doneDate').value;
+  var err = !(amt > 0) || !isFinite(amt) ? 'eAmount' : !parse(date) ? 'eDate' : (doneMode === 'credit' && !party) ? 'eParty' : '';
+  if (err) { $('#doneErr').textContent = t(err); return; }
+  var ok = commit(function () {
+    var kk = S.tasks.filter(function (x) { return x.id === k.id; })[0];
+    var e = { id: uid(), plotId: kk.plotId, type: 'expense', category: kk.cat, date: date, amount: r2(amt), mode: doneMode, party: party, notes: taskTitle(kk), attachment: null, taskId: kk.id, dir: 'out' };
+    S.entries.push(e); kk.status = 'done'; kk.entryId = e.id;
+  });
+  if (ok) closeM('doneModal');
+}
+function drawEntryForm() {
+  chipSet($('#entryTypes'), [['expense', t('kharch')], ['income', t('aamdani')], ['payment', t('bhugtan')]], draft.type, function (v) {
+    draft.type = v; if (v === 'income') draft.cat = 'fasal'; else if (draft.cat === 'fasal') draft.cat = 'khad'; drawEntryForm();
+  });
+  var g = $('#entryCats');
+  g.innerHTML = CATS.map(function (c) { return '<button type="button" class="cat" data-v="' + c[0] + '" aria-pressed="' + (draft.cat === c[0]) + '"><span style="font-size:24px">' + c[1] + '</span>' + esc(t('cat_' + c[0])) + '</button>'; }).join('');
+  g.onclick = function (ev) { var b = ev.target.closest('[data-v]'); if (!b) return; draft.cat = b.getAttribute('data-v'); if (draft.cat === 'fasal' && draft.type === 'expense') draft.type = 'income'; drawEntryForm(); };
+  chipSet($('#entryModes'), [['cash', t('nagad')], ['credit', t('udhaar')]], draft.mode, function (v) { draft.mode = v; drawEntryForm(); });
+  chipSet($('#entryDirs'), [['out', t('dirOut')], ['in', t('dirIn')]], draft.dir, function (v) { draft.dir = v; drawEntryForm(); });
+  $('#modeWrap').classList.toggle('hidden', draft.type === 'payment');
+  $('#dirWrap').classList.toggle('hidden', draft.type !== 'payment');
+  $('#entryChips').innerHTML = [500, 1000, 2500].map(function (n) { return '<button type="button" class="chip" data-add="' + n + '">+₹' + n.toLocaleString('en-IN') + '</button>'; }).join('');
+  $('#entryChips').onclick = function (ev) { var b = ev.target.closest('[data-add]'); if (!b) return; var cur = parseFloat($('#entryAmount').value) || 0; $('#entryAmount').value = r2(cur + parseInt(b.getAttribute('data-add'), 10)); };
+  drawAtt();
+}
+function drawAtt() {
+  var w = $('#attWrap'), a = draft.att;
+  if (!a) { w.innerHTML = ''; return; }
+  w.innerHTML = (a.kind === 'image' ? '<img class="thumb" alt="" src="' + esc(a.data) + '">' : '<span style="font-size:36px">📄</span>') +
+    '<div class="grow"><div class="muted">' + t('replace') + '</div><button type="button" class="btn btn-sm btn-d" data-act="rmatt">' + t('removeAtt') + '</button></div>';
+}
+function showEntryForm(e) {
+  stopMic();
+  draft = e ? { type: e.type, cat: e.category, mode: e.mode, dir: e.dir || 'out', att: e.attachment || null } : { type: 'expense', cat: 'khad', mode: 'cash', dir: 'out', att: null };
+  $('#entryTitle').textContent = e ? t('editEntry') : t('newEntry');
+  $('#entryId').value = e ? e.id : '';
+  $('#entryDate').value = e ? e.date : today();
+  $('#entryAmount').value = e ? e.amount : '';
+  $('#entryParty').value = e ? e.party || '' : '';
+  $('#entryNotes').value = e ? e.notes || '' : '';
+  $('#entryFile').value = '';
+  $('#entryErr').textContent = ''; $('#micStatus').textContent = '';
+  drawEntryForm();
+  openM('entryModal');
+}
+function saveEntry(ev) {
+  ev.preventDefault();
+  var id = $('#entryId').value, amt = parseFloat($('#entryAmount').value), date = $('#entryDate').value, party = $('#entryParty').value.trim();
+  var mode = draft.type === 'payment' ? 'cash' : draft.mode;
+  var err = !(amt > 0) || !isFinite(amt) ? 'eAmount' : !parse(date) ? 'eDate' : ((mode === 'credit' || draft.type === 'payment') && !party) ? 'eParty' : (draft.type === 'expense' && draft.cat === 'fasal') ? 'eFasal' : '';
+  if (err) { $('#entryErr').textContent = t(err); return; }
+  var ok = commit(function () {
+    var e = S.entries.filter(function (x) { return x.id === id; })[0];
+    if (!e) { e = { id: uid(), plotId: S.activePlotId, taskId: null }; S.entries.push(e); }
+    e.type = draft.type; e.category = draft.cat; e.date = date; e.amount = r2(amt); e.mode = mode; e.party = party;
+    e.dir = draft.type === 'payment' ? draft.dir : 'out'; e.notes = $('#entryNotes').value.trim(); e.attachment = draft.att;
+  });
+  if (ok) closeM('entryModal');
+}
+function compress(file) {
+  return new Promise(function (res, rej) {
+    if (file.type === 'application/pdf') {
+      if (file.size > 400 * 1024) return rej(new Error('big'));
+      var fr = new FileReader(); fr.onload = function () { res({ kind: 'pdf', data: fr.result }); }; fr.onerror = function () { rej(new Error('read')); }; fr.readAsDataURL(file); return;
+    }
+    if (!/^image\//.test(file.type)) return rej(new Error('type'));
+    var url = URL.createObjectURL(file), img = new Image();
+    img.onload = function () {
+      var max = 1000, w = img.naturalWidth, h = img.naturalHeight, sc = Math.min(1, max / Math.max(w, h));
+      w = Math.max(1, Math.round(w * sc)); h = Math.max(1, Math.round(h * sc));
+      var c = document.createElement('canvas'); c.width = w; c.height = h;
+      var cx = c.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, w, h); cx.drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(url);
+      res({ kind: 'image', data: c.toDataURL('image/jpeg', 0.65) });
+    };
+    img.onerror = function () { URL.revokeObjectURL(url); rej(new Error('img')); };
+    img.src = url;
+  });
+}
+function onFile() {
+  var f = $('#entryFile').files[0]; if (!f) return;
+  compress(f).then(function (a) { draft.att = a; $('#entryErr').textContent = ''; drawAtt(); }, function () { $('#entryErr').textContent = t('attBad'); $('#entryFile').value = ''; });
+}
+function stopMic() {
+  clearTimeout(recogTimer);
+  if (recog) { var r = recog; recog = null; try { r.onresult = r.onerror = r.onend = null; r.abort(); } catch (e) { /* ignore */ } }
+  $('#micBtn').textContent = t('mic');
+  if ($('#micStatus').textContent === t('micListening')) $('#micStatus').textContent = '';
+}
+function toggleMic() {
+  if (recog) { try { recog.stop(); } catch (e) { stopMic(); } return; }
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { $('#micStatus').textContent = t('micNo'); return; }
+  try {
+    var r = new SR(); recog = r;
+    r.lang = 'hi-IN'; r.interimResults = false; r.continuous = false;
+    r.onresult = function (ev) {
+      var txt = ''; for (var i = ev.resultIndex; i < ev.results.length; i++) if (ev.results[i].isFinal) txt += ev.results[i][0].transcript + ' ';
+      txt = txt.trim(); if (txt) { var n = $('#entryNotes'); n.value = (n.value ? n.value.trim() + ' ' : '') + txt; }
+    };
+    r.onerror = function (ev) { $('#micStatus').textContent = t('micErr', { e: ev && ev.error ? ev.error : '?' }); };
+    r.onend = function () { var msg = $('#micStatus').textContent; recog = null; clearTimeout(recogTimer); $('#micBtn').textContent = t('mic'); if (msg === t('micListening')) $('#micStatus').textContent = ''; };
+    r.start();
+    $('#micBtn').textContent = t('micStop'); $('#micStatus').textContent = t('micListening');
+    recogTimer = setTimeout(function () { try { r.stop(); } catch (e) { stopMic(); } }, 20000);
+  } catch (e) { recog = null; clearTimeout(recogTimer); $('#micBtn').textContent = t('mic'); $('#micStatus').textContent = t('micErr', { e: 'start' }); }
+}
+
+/* ================= party actions ================= */
+function partyByKey(k) { var p = activePlot(); return p ? parties(p.id).filter(function (x) { return x.key === k; })[0] : null; }
+function statementText(q) {
+  var p = activePlot(), L = [];
+  L.push('*' + p.name + ' — ' + t('stHdr') + '*');
+  L.push(t('stName') + ': ' + q.name);
+  L.push(t('date') + ': ' + fmtD(today()));
+  L.push('------------');
+  q.rows.forEach(function (e) {
+    var lbl = e.type === 'payment' ? (e.dir === 'in' ? t('stRecvd') : t('stPaid')) : e.type === 'income' ? t('stRecv') : t('stKaam');
+    var tail = e.type === 'expense' ? t('cat_' + e.category).split(' ')[0] : '';
+    L.push(fmtD(e.date) + ' | ' + lbl + (tail ? ' (' + tail + ')' : '') + (e.notes ? ' - ' + e.notes : '') + ' | ' + money(e.amount));
+  });
+  L.push('------------');
+  if (q.bill || q.paid) { L.push(t('stTotalBill') + ': ' + money(q.bill)); L.push(t('stTotalPaid') + ': ' + money(q.paid)); L.push(t('stBaki') + ': ' + (q.baki <= 0 && q.bill > 0 ? t('chukta') : money(Math.max(q.baki, 0)))); }
+  if (q.recvBill || q.recvIn) { L.push(t('stRecv') + ': ' + money(q.recvBill)); L.push(t('stRecvd') + ': ' + money(q.recvIn)); L.push(t('lenaBaki') + ': ' + money(Math.max(q.lena, 0))); }
+  return L.join('\n');
+}
+function showSettle(q) {
+  var out = q.baki > 0, amt = out ? q.baki : q.lena;
+  $('#settleKey').value = q.key;
+  $('#settleInfo').textContent = t('settleInfo', { n: q.name, a: money(amt) }) + ' (' + (out ? t('dirOut') : t('dirIn')) + ')';
+  $('#settleAmount').value = amt;
+  $('#settleDate').value = today();
+  $('#settleErr').textContent = '';
+  openM('settleModal');
+}
+function saveSettle(ev) {
+  ev.preventDefault();
+  var q = partyByKey($('#settleKey').value); if (!q) return;
+  var out = q.baki > 0, max = out ? q.baki : q.lena, amt = parseFloat($('#settleAmount').value), date = $('#settleDate').value;
+  var err = !(amt > 0) || !isFinite(amt) ? 'eAmount' : !parse(date) ? 'eDate' : r2(amt) > max ? 'eOver' : '';
+  if (err) { $('#settleErr').textContent = t(err); return; }
+  var ok = commit(function () {
+    S.entries.push({ id: uid(), plotId: S.activePlotId, type: 'payment', category: out ? q.cat : 'fasal', date: date, amount: r2(amt), mode: 'cash', party: q.name, notes: t('settleTitle'), attachment: null, taskId: null, dir: out ? 'out' : 'in' });
+    openParties[q.key] = true;
+  });
+  if (ok) closeM('settleModal');
+}
+
+/* ================= misc actions ================= */
+function speak(k) {
+  var p = activePlot();
+  if (!('speechSynthesis' in window) || typeof SpeechSynthesisUtterance === 'undefined') { toast(t('noSpeech')); return; }
+  try {
+    var item = k.item ? k.item.hi : '', si = stageOf(k.day);
+    var line = TTL(k, item, p);
+    var u = new SpeechSynthesisUtterance(line); u.lang = 'hi-IN'; u.rate = 0.9;
+    var v = speechSynthesis.getVoices().filter(function (x) { return /^hi/i.test(x.lang); })[0]; if (v) u.voice = v;
+    u.onerror = function () { toast(t('noSpeech')); };
+    speechSynthesis.cancel(); speechSynthesis.speak(u);
+  } catch (e) { toast(t('noSpeech')); }
+}
+function TTL(k, item, p) {
+  var si = stageOf(k.day), title = k.name || T['stage' + (si + 1)][0];
+  var dose = k.doseText || (k.kind === 'kg' ? k.qty + ' किलो ' + item + ', यानी ' + k.perAcre + ' किलो प्रति एकड़' : k.kind === 'tank' ? item + ', ' + k.qty + ' टंकी बीस लीटर की' : k.kind === 'acre' ? item + ', ' + k.qty + ' एकड़' : '');
+  return title + '. ' + dose + '. ' + 'अनुमानित खर्च ' + Math.round(k.cost) + ' रुपये। दवा डालने से पहले लेबल ज़रूर पढ़ें।';
+}
+function doExport() {
+  try {
+    var blob = new Blob([JSON.stringify(S, null, 2)], { type: 'application/json' });
+    var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'khetkhata-backup-' + today() + '.json';
+    document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    toast(t('exported'));
+  } catch (e) { toast(t('storageFail')); }
+}
+function doImport(file) {
+  if (!file) return;
+  var fr = new FileReader();
+  fr.onload = function () {
+    var o, err;
+    try { o = JSON.parse(fr.result); err = validate(o); } catch (e) { err = 'JSON'; }
+    if (err) { toast(t('importBad', { e: err })); return; }
+    if (!confirm(t('confirmImport'))) return;
+    var keepLang = S.lang;
+    commit(function () { S = o; if (!S.lang) S.lang = keepLang; if (!S.activePlotId && S.plots.length) S.activePlotId = S.plots[0].id; });
+    if (storageOK) toast(t('imported'));
+  };
+  fr.onerror = function () { toast(t('importBad', { e: 'read' })); };
+  fr.readAsText(file);
+}
+function copyText() {
+  var txt = $('#shareText').value;
+  function fallback() {
+    var ta = $('#shareText');
+    try { ta.focus(); ta.select(); toast(document.execCommand('copy') ? t('copied') : t('copyFail')); } catch (e) { toast(t('copyFail')); }
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(function () { toast(t('copied')); }, fallback); else fallback();
+}
+
+/* ================= events ================= */
+document.addEventListener('click', function (ev) {
+  var b = ev.target.closest('[data-act]'); if (!b) return;
+  var a = b.getAttribute('data-act'), id = b.getAttribute('data-id'), p = activePlot(), k;
+  switch (a) {
+    case 'lang': commit(function () { S.lang = lang() ? 'hi' : 'en'; }); break;
+    case 'tab': tab = b.getAttribute('data-tab'); render(); window.scrollTo(0, 0); break;
+    case 'selplot': commit(function () { S.activePlotId = id; }); break;
+    case 'addplot': showPlotForm(null); break;
+    case 'editplot': if (p) showPlotForm(p); break;
+    case 'delplot':
+      if (!p) break;
+      var tc = S.tasks.filter(function (x) { return x.plotId === p.id; }).length, ec = entriesOf(p.id).length;
+      if (confirm(t('confirmDelPlot', { n: p.name, t: tc, e: ec }))) commit(function () {
+        S.plots = S.plots.filter(function (x) { return x.id !== p.id; });
+        S.tasks = S.tasks.filter(function (x) { return x.plotId !== p.id; });
+        S.entries = S.entries.filter(function (x) { return x.plotId !== p.id; });
+        S.activePlotId = S.plots.length ? S.plots[0].id : null;
+      });
+      break;
+    case 'addtask': showTaskForm(null); break;
+    case 'edittask': k = S.tasks.filter(function (x) { return x.id === id; })[0]; if (k) showTaskForm(k); break;
+    case 'deltask': if (confirm(t('confirmDelTask'))) commit(function () { S.tasks = S.tasks.filter(function (x) { return x.id !== id; }); }); break;
+    case 'done': k = S.tasks.filter(function (x) { return x.id === id; })[0]; if (k) showDone(k); break;
+    case 'speak': k = S.tasks.filter(function (x) { return x.id === id; })[0]; if (k) speak(k); break;
+    case 'addentry': showEntryForm(null); break;
+    case 'editentry': var e1 = S.entries.filter(function (x) { return x.id === id; })[0]; if (e1) showEntryForm(e1); break;
+    case 'delentry':
+      if (confirm(t('confirmDelEntry'))) commit(function () {
+        S.entries = S.entries.filter(function (x) { return x.id !== id; });
+        S.tasks.forEach(function (x) { if (x.entryId === id) { x.entryId = null; x.status = 'pending'; } });
+      });
+      break;
+    case 'viewatt':
+      var e2 = S.entries.filter(function (x) { return x.id === id; })[0];
+      if (e2 && e2.attachment) {
+        $('#viewerBody').innerHTML = e2.attachment.kind === 'image' ? '<img alt="Bill" style="max-width:100%;max-height:80vh;border-radius:8px;background:#fff" src="' + esc(e2.attachment.data) + '">' : '<iframe title="Bill" style="width:100%;height:80vh;background:#fff;border:0" src="' + esc(e2.attachment.data) + '"></iframe>';
+        openM('viewerModal');
+      }
+      break;
+    case 'rmatt': draft.att = null; $('#entryFile').value = ''; drawAtt(); break;
+    case 'mic': toggleMic(); break;
+    case 'share': var q = partyByKey(b.getAttribute('data-key')); if (q) { var txt = statementText(q); $('#shareText').value = txt; shareLink = 'https://wa.me/?text=' + encodeURIComponent(txt); openM('shareModal'); } break;
+    case 'wa': window.open(shareLink, '_blank', 'noopener'); break;
+    case 'copy': copyText(); break;
+    case 'settle': var q2 = partyByKey(b.getAttribute('data-key')); if (q2) showSettle(q2); break;
+    case 'persist':
+      if (navigator.storage && navigator.storage.persist) navigator.storage.persist().then(function (ok) { toast(t(ok ? 'dPersistOk' : 'dPersistNo')); }, function () { toast(t('dPersistNo')); });
+      else toast(t('dPersistNo'));
+      break;
+    case 'export': doExport(); break;
+    case 'import': $('#importFile').value = ''; $('#importFile').click(); break;
+    case 'close': closeM(b.getAttribute('data-modal')); break;
+  }
+});
+document.addEventListener('toggle', function (ev) { var d = ev.target; if (d.tagName === 'DETAILS' && d.dataset.key) { if (d.open) openParties[d.dataset.key] = true; else delete openParties[d.dataset.key]; } }, true);
+document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape') document.querySelectorAll('.modal.open').forEach(function (m) { closeM(m.id); }); });
+document.querySelectorAll('.modal').forEach(function (m) { m.addEventListener('mousedown', function (ev) { if (ev.target === m) closeM(m.id); }); });
+$('#plotForm').addEventListener('submit', savePlot);
+$('#taskForm').addEventListener('submit', saveTask);
+$('#doneForm').addEventListener('submit', saveDone);
+$('#entryForm').addEventListener('submit', saveEntry);
+$('#settleForm').addEventListener('submit', saveSettle);
+$('#entryFile').addEventListener('change', onFile);
+$('#importFile').addEventListener('change', function () { doImport(this.files[0]); });
+
+load();
+render();
+window.KhetKhata = { validate: validate, state: function () { return S; } };
+})();
+</script>
+</body>
+</html>
